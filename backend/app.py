@@ -16,6 +16,12 @@ import uvicorn
 import time
 import platform
 import pandas as pd
+try:
+    from docx import Document
+    DOCX_AVAILABLE = True
+except ImportError:
+    DOCX_AVAILABLE = False
+    print("WARNING: python-docx not installed. DOCX file processing will not work.")
 
 # Detect operating system
 IS_WINDOWS = platform.system() == "Windows"
@@ -273,6 +279,47 @@ def extract_text_from_image(file_path):
         return pytesseract.image_to_string(file_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error extracting text from image: {str(e)}")
+
+def extract_text_from_docx(file_path):
+    """Extract text from DOCX file"""
+    try:
+        if not DOCX_AVAILABLE:
+            raise HTTPException(
+                status_code=500,
+                detail="python-docx library is not installed. Please install it with: pip install python-docx"
+            )
+        
+        doc = Document(file_path)
+        text_parts = []
+        
+        # Extract text from all paragraphs
+        for paragraph in doc.paragraphs:
+            if paragraph.text.strip():
+                text_parts.append(paragraph.text)
+        
+        # Extract text from tables
+        for table in doc.tables:
+            for row in table.rows:
+                row_text = []
+                for cell in row.cells:
+                    if cell.text.strip():
+                        row_text.append(cell.text.strip())
+                if row_text:
+                    text_parts.append(" | ".join(row_text))
+        
+        text = "\n".join(text_parts)
+        
+        if not text.strip():
+            raise HTTPException(
+                status_code=500,
+                detail="No text could be extracted from the DOCX file."
+            )
+        
+        return text
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error extracting text from DOCX: {str(e)}")
 
 # ------------------------------
 # DOCUMENT TYPE CLASSIFIER
@@ -2097,6 +2144,8 @@ async def process_audit_files(
             try:
                 if file.filename.lower().endswith(".pdf"):
                     text = extract_text_from_pdf(temp_file_path)
+                elif file.filename.lower().endswith((".docx", ".doc")):
+                    text = extract_text_from_docx(temp_file_path)
                 elif file.filename.lower().endswith((".jpg", ".jpeg", ".png")):
                     text = extract_text_from_image(temp_file_path)
                 else:
@@ -2338,6 +2387,9 @@ async def process_file(
         if file.filename.lower().endswith(".pdf"):
             print("Extracting from PDF...")
             text = extract_text_from_pdf(temp_file_path)
+        elif file.filename.lower().endswith((".docx", ".doc")):
+            print("Extracting from DOCX...")
+            text = extract_text_from_docx(temp_file_path)
         elif file.filename.lower().endswith((".jpg", ".jpeg", ".png")):
             print("Extracting from image...")
             text = extract_text_from_image(temp_file_path)

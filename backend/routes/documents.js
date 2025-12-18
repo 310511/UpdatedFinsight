@@ -19,6 +19,8 @@ const upload = multer({
       'application/pdf',
       'application/vnd.ms-excel',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
       'text/csv',
       'image/jpeg',
       'image/png'
@@ -27,7 +29,7 @@ const upload = multer({
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Allowed: PDF, Excel, CSV, JPG, PNG'));
+      cb(new Error('Invalid file type. Allowed: PDF, Excel, Word (DOC/DOCX), CSV, JPG, PNG'));
     }
   }
 });

@@ -141,7 +141,7 @@ const UploadPage = () => {
       // Validate audit inputs - check if at least one file is uploaded
       const uploadedFiles = Object.values(auditFiles).filter(file => file !== null);
       if (uploadedFiles.length === 0) {
-        alert("Please upload at least one PDF file to generate the audit report.");
+        alert("Please upload at least one PDF or DOCX file to generate the audit report.");
         return;
       }
       
@@ -466,7 +466,7 @@ const UploadPage = () => {
             )}
             {documentType === "audit" && !isAuditFormValid() && (
               <p className="mt-2 text-sm text-red-500 text-center">
-                Please upload at least one PDF file to generate the audit report
+                Please upload at least one PDF or DOCX file to generate the audit report
               </p>
             )}
             {documentType === "gst_return" && !isGstFormValid() && (
@@ -506,11 +506,17 @@ const AuditUploadForm = ({ auditFiles, onFileChange, onRemoveFile }) => {
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
       const file = files[0];
-      // Validate it's a PDF
-      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+      // Validate it's a PDF or DOCX
+      const isValidFile = file.type === "application/pdf" || 
+                         file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                         file.type === "application/msword" ||
+                         file.name.toLowerCase().endsWith(".pdf") ||
+                         file.name.toLowerCase().endsWith(".docx") ||
+                         file.name.toLowerCase().endsWith(".doc");
+      if (isValidFile) {
         onFileChange(fieldKey, file);
       } else {
-        alert("Please drop a PDF file only.");
+        alert("Please drop a PDF or DOCX file only.");
       }
     }
   };
@@ -519,72 +525,72 @@ const AuditUploadForm = ({ auditFiles, onFileChange, onRemoveFile }) => {
     {
       key: "trialBalance",
       label: "Trial Balance",
-      description: "PDF file containing trial balance",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing trial balance",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📊"
     },
     {
       key: "profitLossStatement",
       label: "Profit & Loss Statement",
-      description: "PDF file containing profit & loss statement",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing profit & loss statement",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📈"
     },
     {
       key: "balanceSheet",
       label: "Balance Sheet",
-      description: "PDF file containing balance sheet",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing balance sheet",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📋"
     },
     {
       key: "generalLedger",
       label: "General Ledger",
-      description: "PDF file containing general ledger sample",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing general ledger sample",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📔"
     },
     {
       key: "cashBook",
       label: "Cash Book",
-      description: "PDF file containing cash book records",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing cash book records",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "💰"
     },
     {
       key: "bankStatement",
       label: "Bank Statement",
-      description: "PDF file containing bank statement",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing bank statement",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "🏦"
     },
     {
       key: "fixedAssetRegister",
       label: "Fixed Asset Register",
-      description: "PDF file containing fixed asset register",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing fixed asset register",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "🏢"
     },
     {
       key: "gstReturns",
       label: "GST Returns",
-      description: "PDF file containing GST returns",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing GST returns",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📑"
     },
     {
       key: "tdsSummary",
       label: "TDS Summary",
-      description: "PDF file containing TDS summary (e.g., FY 2023-24)",
-      accept: ".pdf",
+      description: "PDF or DOCX file containing TDS summary (e.g., FY 2023-24)",
+      accept: ".pdf,.docx,.doc",
       required: false,
       icon: "📄"
     },
@@ -594,7 +600,7 @@ const AuditUploadForm = ({ auditFiles, onFileChange, onRemoveFile }) => {
     <div className="w-full max-w-6xl mx-auto space-y-6">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
         <h3 className="font-semibold text-blue-900 mb-1">INPUTS FOR AUDIT REPORT</h3>
-        <p className="text-sm text-blue-700">Please upload the PDF files you have. Upload as many as available - the audit report will be generated from all uploaded documents.</p>
+        <p className="text-sm text-blue-700">Please upload the PDF or DOCX files you have. Upload as many as available - the audit report will be generated from all uploaded documents.</p>
       </div>
 
       {/* File Uploads */}
@@ -660,11 +666,17 @@ const AuditUploadForm = ({ auditFiles, onFileChange, onRemoveFile }) => {
                   onChange={(e) => {
                     const file = e.target.files[0];
                     if (file) {
-                      // Validate it's a PDF
-                      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+                      // Validate it's a PDF or DOCX
+                      const isValidFile = file.type === "application/pdf" || 
+                                         file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                                         file.type === "application/msword" ||
+                                         file.name.toLowerCase().endsWith(".pdf") ||
+                                         file.name.toLowerCase().endsWith(".docx") ||
+                                         file.name.toLowerCase().endsWith(".doc");
+                      if (isValidFile) {
                         onFileChange(input.key, file);
                       } else {
-                        alert("Please select a PDF file only.");
+                        alert("Please select a PDF or DOCX file only.");
                       }
                     }
                   }}
