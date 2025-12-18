@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  --background: 0, 0%, 0%;
+  --foreground: 0, 100%, 100%;
+  --sky-300: 203, 92%, 53%;
+  --gray-300: 0, 0%, 70%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-long {
+  animation: fadeIn 1.5s ease-out;
+}
+
+/* Infinite slider movement from RIGHT → LEFT */
+.slider-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: slide-left 12s linear infinite;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Blob animation for hero background */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
